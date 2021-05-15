@@ -4,9 +4,10 @@ import { Type } from "../data/type";
 export default function parseIdMap(rules: Rule[]): string {
     const offset = 10000;
     const map = getMapOfRules(rules);
-    let output_lines: string[] = [
+    const output_lines: string[] = [
         '# Generated with Proxmox LXC idmap helper created by Stanisław Nieradko'
     ];
+    let textRules: TextRule[] = [];
     let groupOfUndefinedUsers: number[] = [];
     let groupOfUndefinedGroups: number[] = [];
     for (let id = 0; id < 65535; id++) {
@@ -24,22 +25,48 @@ export default function parseIdMap(rules: Rule[]): string {
             groupOfUndefinedUsers = groupOfUndefinedUsers.filter(x => x !== rule.id_in_host);
             groupOfUndefinedGroups.push(id);
         }
-        output_lines = output_lines.concat(getLinesFromRule(rule));
+        textRules = textRules.concat(getTextRulesFromRule(rule));
     }
 
-    for (const undefinedSerieOfUsers of generateSeries(groupOfUndefinedUsers)) {
-        output_lines.push(`lxc.idmap: u ${undefinedSerieOfUsers.start} ${undefinedSerieOfUsers.start + offset} ${undefinedSerieOfUsers.count}`);
-    }
-    for (const undefinedSerieOfGroups of generateSeries(groupOfUndefinedGroups)) {
-        output_lines.push(`lxc.idmap: g ${undefinedSerieOfGroups.start} ${undefinedSerieOfGroups.start + offset} ${undefinedSerieOfGroups.count}`);
-    }
+    textRules = textRules
+        .concat(generateSeries(groupOfUndefinedUsers).map(serie => generateTextRuleFromSerie('u', offset, serie)))
+        .concat(generateSeries(groupOfUndefinedUsers).map(serie => generateTextRuleFromSerie('g', offset, serie)));
 
-    return output_lines.sort().join('\n');
+    return output_lines
+        .concat(textRules
+            .sort(sortTextRule)
+            .map(getLinesFromTextRules))
+        .join('\n');
 }
+
 type Serie = {
     start: number,
     count: number
 };
+
+type TextRule = {
+    type: string,
+    start_host: number,
+    start_container: number,
+    count: number
+};
+
+function sortTextRule(a: TextRule, b: TextRule): number {
+    return a.start_host - b.start_host;
+}
+
+function getLinesFromTextRules(textRule: TextRule): string {
+    return `lxc.idmap: ${textRule.type} ${textRule.start_host} ${textRule.start_container} ${textRule.count}`;
+}
+
+function generateTextRuleFromSerie(type: string, offset: number, serie: Serie): TextRule {
+    return {
+        type,
+        start_host: serie.start,
+        start_container: serie.start + offset,
+        count: serie.count
+    };
+}
 
 function generateSeries(numbers: number[]): Serie[] {
     const output: Serie[] = [];
@@ -67,16 +94,26 @@ function getMapOfRules(rules: Rule[]): Map<number, Rule> {
     return map;
 }
 
-function getLinesFromRule(rule: Rule): string[] {
+function getTextRulesFromRule(rule: Rule): TextRule[] {
     if (rule.type == Type.UserWithGroup) {
         return [
-            `lxc.idmap: u ${rule.id_in_container} ${rule.id_in_host}`,
-            `lxc.idmap: g ${rule.id_in_container} ${rule.id_in_host}`
+            {
+                type: 'u', start_host: rule.id_in_host, start_container: rule.id_in_container, count: 1
+            },
+            { type: 'g', start_host: rule.id_in_host, start_container: rule.id_in_container, count: 1 }
         ];
     } else if (rule.type == Type.User) {
-        return [`lxc.idmap: u ${rule.id_in_container} ${rule.id_in_host}`];
+        return [
+            {
+                type: 'u', start_host: rule.id_in_host, start_container: rule.id_in_container, count: 1
+            }
+        ];
     } else if (rule.type == Type.Group) {
-        return [`lxc.idmap: g ${rule.id_in_container} ${rule.id_in_host}`];
+        return [
+            {
+                type: 'g', start_host: rule.id_in_host, start_container: rule.id_in_container, count: 1
+            }
+        ];
     } else {
         console.error('Invalid rule type found!', rule);
         alert('Invalid rule type found! Check console to find out what happened!');
