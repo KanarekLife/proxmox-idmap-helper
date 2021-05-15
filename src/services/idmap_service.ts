@@ -10,7 +10,7 @@ export default function parseIdMap(rules: Rule[]): string {
     let textRules: TextRule[] = [];
     let groupOfUndefinedUsers: number[] = [];
     let groupOfUndefinedGroups: number[] = [];
-    for (let id = 0; id < 65535; id++) {
+    for (let id = 0; id < 65536; id++) {
         const rule = map.get(id);
         if (!rule) {
             groupOfUndefinedUsers.push(id);
@@ -30,7 +30,7 @@ export default function parseIdMap(rules: Rule[]): string {
 
     textRules = textRules
         .concat(generateSeries(groupOfUndefinedUsers).map(serie => generateTextRuleFromSerie('u', offset, serie)))
-        .concat(generateSeries(groupOfUndefinedUsers).map(serie => generateTextRuleFromSerie('g', offset, serie)));
+        .concat(generateSeries(groupOfUndefinedGroups).map(serie => generateTextRuleFromSerie('g', offset, serie)));
 
     return output_lines
         .concat(textRules

@@ -4,9 +4,9 @@
     import Output from "./Output.svelte";
     let rules: Rule[] = [
         {
-            type: 0,
-            id_in_container: 996,
-            id_in_host: 996,
+            type: 2,
+            id_in_container: 1002,
+            id_in_host: 1002,
         },
     ];
 </script>

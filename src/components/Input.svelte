@@ -83,7 +83,6 @@
                     ><abbr title="UID or GID in your proxmox host">H_ID</abbr
                     ></th
                 >
-                <th />
                 <th
                     ><abbr title="Desired UID or GID in your container"
                         >C_ID</abbr
@@ -95,25 +94,33 @@
                 {#each rules as rule (rule)}
                     <tr>
                         <td>
-                            <select bind:value={rule.type}>
-                                <option value="0">User</option>
-                                <option value="1"
-                                    >User Without User Group</option
+                            <div class="select">
+                                <select
+                                    value={rule.type.toString()}
+                                    on:blur={(e) =>
+                                        //@ts-ignore
+                                        (rule.type = parseInt(e.target.value))}
                                 >
-                                <option value="2">Group</option>
-                            </select>
+                                    <option value="0">User</option>
+                                    <option value="1"
+                                        >User Without User Group</option
+                                    >
+                                    <option value="2">Group</option>
+                                </select>
+                            </div>
                         </td>
                         <td
                             ><input
+                                class="input"
                                 type="number"
                                 min="0"
                                 max="65534"
                                 bind:value={rule.id_in_host}
                             /></td
                         >
-                        <td>➡️</td>
                         <td
                             ><input
+                                class="input"
                                 type="number"
                                 min="0"
                                 max="65534"
@@ -131,15 +138,22 @@
                 {/each}
                 <tr>
                     <td>
-                        <select bind:value={typeOfNewRule}>
-                            <option value="-1">Choose type of new rule</option>
-                            <option value="0">User</option>
-                            <option value="1">User Without User Group</option>
-                            <option value="2">Group</option>
-                        </select>
+                        <div class="select">
+                            <select bind:value={typeOfNewRule}>
+                                <option value="-1"
+                                    >Choose type of new rule</option
+                                >
+                                <option value="0">User</option>
+                                <option value="1"
+                                    >User Without User Group</option
+                                >
+                                <option value="2">Group</option>
+                            </select>
+                        </div>
                     </td>
                     <td>
                         <input
+                            class="input"
                             type="number"
                             placeholder="GID / UID in host for new rule"
                             min="0"
@@ -147,9 +161,9 @@
                             bind:value={hostIdOfNewRule}
                         />
                     </td>
-                    <td>➡️</td>
                     <td>
                         <input
+                            class="input"
                             type="number"
                             min="0"
                             max="65534"
