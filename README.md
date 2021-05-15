@@ -103,3 +103,5 @@ Then, from within your project folder:
 npm run build
 surge public my-project.surge.sh
 ```
+
+## Max value of gid is set to 65534. If you need more you're pro enough to figure it out on your own!
