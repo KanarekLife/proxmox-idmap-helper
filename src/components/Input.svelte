@@ -54,6 +54,7 @@
     function removeRule(rule: Rule) {
         rules = rules.filter((x) => x !== rule);
     }
+    function updateRule(rule: Rule) {}
     function createDangerNotification(content: string) {
         const notification = document.createElement("div");
         notification.classList.add("notification", "is-danger");
@@ -74,8 +75,8 @@
 
     <div class="notifications" />
 
-    <div class="container">
-        <table class="table">
+    <div class="table-container">
+        <table class="table is-bordered is-striped is-fullwidth">
             <thead>
                 <th>Type</th>
                 <th
