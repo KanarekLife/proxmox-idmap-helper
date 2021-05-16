@@ -73,7 +73,7 @@
     <h1 class="title">Input</h1>
     <h2 class="subtitle">Enter which uids or gids you want to pass:</h2>
 
-    <div class="notifications" />
+    <div class="notifications block" />
 
     <div class="table-container" style="overflow-x: auto;">
         <table class="table is-bordered is-striped is-fullwidth">
