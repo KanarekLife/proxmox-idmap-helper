@@ -17,11 +17,11 @@ export function getLXCConfiguration(rules: Rule[], offset: number = 10000): stri
             groupOfUndefinedGroups.push(id);
             continue;
         }
-        if (rule.type === Type.Group) {
+        if (rule.type == Type.Group) {
             groupOfUndefinedGroups = groupOfUndefinedGroups.filter(x => x !== rule.id_in_host);
             groupOfUndefinedUsers.push(id);
         }
-        if (rule.type === Type.User) {
+        if (rule.type == Type.User) {
             groupOfUndefinedUsers = groupOfUndefinedUsers.filter(x => x !== rule.id_in_host);
             groupOfUndefinedGroups.push(id);
         }
@@ -42,7 +42,8 @@ export function getLXCConfiguration(rules: Rule[], offset: number = 10000): stri
 export function getSubUidConfiguration(rules: Rule[]): string {
     const userRules = rules
         .filter(x => x.type == Type.User || x.type == Type.UserWithGroup);
-    const hostIds = userRules.map(x => x.id_in_host);
+    const uniqueUserRules = [...new Set(userRules)];
+    const hostIds = uniqueUserRules.map(x => x.id_in_host);
     const lines = hostIds.map(x => `root:${x}:1`);
     return output_lines
         .concat('root:100000:65536')
@@ -53,7 +54,8 @@ export function getSubUidConfiguration(rules: Rule[]): string {
 export function getSubGidConfiguration(rules: Rule[]): string {
     const userRules = rules
         .filter(x => x.type == Type.Group || x.type == Type.UserWithGroup);
-    const hostIds = userRules.map(x => x.id_in_host);
+    const uniqueUserRules = [...new Set(userRules)];
+    const hostIds = uniqueUserRules.map(x => x.id_in_host);
     const lines = hostIds.map(x => `root:${x}:1`);
     return output_lines
         .concat('root:100000:65536')
