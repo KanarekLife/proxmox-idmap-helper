@@ -1,12 +1,12 @@
 import type Rule from "../data/rule";
 import { Type } from "../data/type";
 
-export default function parseIdMap(rules: Rule[]): string {
-    const offset = 10000;
+const output_lines: string[] = [
+    '# Generated with Proxmox LXC idmap helper created by Stanisław Nieradko'
+];
+
+export function getLXCConfiguration(rules: Rule[], offset: number = 10000): string {
     const map = getMapOfRules(rules);
-    const output_lines: string[] = [
-        '# Generated with Proxmox LXC idmap helper created by Stanisław Nieradko'
-    ];
     let textRules: TextRule[] = [];
     let groupOfUndefinedUsers: number[] = [];
     let groupOfUndefinedGroups: number[] = [];
@@ -36,6 +36,28 @@ export default function parseIdMap(rules: Rule[]): string {
         .concat(textRules
             .sort(sortTextRule)
             .map(getLinesFromTextRules))
+        .join('\n');
+}
+
+export function getSubUidConfiguration(rules: Rule[]): string {
+    const userRules = rules
+        .filter(x => x.type == Type.User || x.type == Type.UserWithGroup);
+    const hostIds = userRules.map(x => x.id_in_host);
+    const lines = hostIds.map(x => `root:${x}:1`);
+    return output_lines
+        .concat('root:100000:65536')
+        .concat(lines)
+        .join('\n');
+}
+
+export function getSubGidConfiguration(rules: Rule[]): string {
+    const userRules = rules
+        .filter(x => x.type == Type.Group || x.type == Type.UserWithGroup);
+    const hostIds = userRules.map(x => x.id_in_host);
+    const lines = hostIds.map(x => `root:${x}:1`);
+    return output_lines
+        .concat('root:100000:65536')
+        .concat(lines)
         .join('\n');
 }
 
