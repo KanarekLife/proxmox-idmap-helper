@@ -5,7 +5,7 @@ const output_lines: string[] = [
     '# Generated with Proxmox LXC idmap helper created by Stanisław Nieradko'
 ];
 
-export function getLXCConfiguration(rules: Rule[], offset: number = 10000): string {
+export function getLXCConfiguration(rules: Rule[], offset: number = 100000): string {
     const map = getMapOfRules(rules);
     let textRules: TextRule[] = [];
     let groupOfUndefinedUsers: number[] = [];
