@@ -1,5 +1,9 @@
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <h1 class="is-size-2">Proxmox LXC idmap helper</h1>
+<section class="hero is-small">
+    <div class="hero-body">
+        <p class="title">Proxmox LXC idmap helper</p>
+        <p class="subtitle">
+            Tool created by <a href="https://nieradko.com">Stanisław Nieradko</a
+            > @ 2021
+        </p>
     </div>
-</nav>
+</section>

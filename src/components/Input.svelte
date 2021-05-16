@@ -75,7 +75,7 @@
 
     <div class="notifications" />
 
-    <div class="table-container">
+    <div class="table-container" style="overflow-x: auto;">
         <table class="table is-bordered is-striped is-fullwidth">
             <thead>
                 <th>Type</th>
@@ -182,3 +182,9 @@
         </table>
     </div>
 </section>
+
+<style>
+    input {
+        min-width: 200px;
+    }
+</style>
