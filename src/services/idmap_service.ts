@@ -80,7 +80,7 @@ function sortTextRule(a: TextRule, b: TextRule): number {
 }
 
 function getLinesFromTextRules(textRule: TextRule): string {
-    return `lxc.idmap: ${textRule.type} ${textRule.start_host} ${textRule.start_container} ${textRule.count}`;
+    return `lxc.idmap: ${textRule.type} ${textRule.start_container} ${textRule.start_host} ${textRule.count}`;
 }
 
 function generateTextRuleFromSerie(type: string, offset: number, serie: Serie): TextRule {
